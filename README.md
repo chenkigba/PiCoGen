@@ -16,6 +16,9 @@ Both approaches demonstrate the ability to capture intermediate
 musical features and generate piano covers effectively. Please
 visit the respective pages for more details.
 
-## Portals
+## Portal
 * PiCoGen (v1): [paper](https://arxiv.org/abs/2407.20883), [website](https://tanchihpin0517.github.io/PiCoGen/picogen1.html), [github](https://github.com/tanchihpin0517/PiCoGen/tree/v1)
 * PiCoGen2 (v2): [paper](https://arxiv.org/abs/2408.01551), [website](https://tanchihpin0517.github.io/PiCoGen/picogen2.html), [github](https://github.com/tanchihpin0517/PiCoGen/tree/v2)
+
+## Dataset
+* Pop1k7 (a.k.a ailabs1k7): [link](https://zenodo.org/records/11649613)
