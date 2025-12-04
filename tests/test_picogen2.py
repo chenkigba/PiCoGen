@@ -1,10 +1,9 @@
 import tempfile
 from pathlib import Path
 
-from mirtoolkit import beat_this, sheetsage
-
 import picogen2
 import picogen2.assets
+from picogen2.mirtoolkit import beat_this, sheetsage
 
 
 def test_picogen():
@@ -18,9 +17,11 @@ def test_api():
     tokenizer = picogen2.Tokenizer()
     model = picogen2.PiCoGenDecoder.from_pretrained(device="cuda")
 
-    beats, downbeats = beat_this.detect(audio_file)
+    beat_detector = beat_this.BeatThis()
+    beats, downbeats = beat_detector(audio_file)
     beat_information = {"beats": beats.tolist(), "downbeats": downbeats.tolist()}
-    sheetsage_output = sheetsage.infer(audio_path=audio_file, beat_information=beat_information)
+    sheetsage_model = sheetsage.SheetSage()
+    sheetsage_output = sheetsage_model(audio_path=audio_file, beat_information=beat_information)
 
     out_events = picogen2.decode(
         model=model,

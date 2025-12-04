@@ -5,10 +5,10 @@ from pathlib import Path
 
 import numpy as np
 import torch
-from mirtoolkit import beat_this, sheetsage
 from tqdm import tqdm
 
 from .data.download import ytdlp_download
+from .mirtoolkit import beat_this, sheetsage
 from .model import PiCoGenDecoder
 from .repr import Event
 from .utils import downbeat_time_to_index
@@ -23,7 +23,8 @@ def download(input_url: str, output_file: Path):
 
 @torch.no_grad()
 def detect_beat(audio_file: Path, output_file: Path):
-    beats, downbeats = beat_this.detect(audio_file)
+    beat_detector = beat_this.BeatThis()
+    beats, downbeats = beat_detector(audio_file)
     beat_info = {"beats": beats.tolist(), "downbeats": downbeats.tolist()}
     output_file.write_text(json.dumps(beat_info, indent=4))
 
@@ -31,7 +32,8 @@ def detect_beat(audio_file: Path, output_file: Path):
 @torch.no_grad()
 def extract_sheetsage_feature(audio_file: Path, output_file: Path, beat_file: Path):
     beat_info = json.loads(beat_file.read_text())
-    sheetsage_output = sheetsage.infer(audio_path=audio_file, beat_information=beat_info)
+    sheetsage_model = sheetsage.SheetSage()
+    sheetsage_output = sheetsage_model(audio_path=audio_file, beat_information=beat_info)
     np.savez_compressed(
         output_file,
         melody=sheetsage_output["melody_last_hidden_state"],

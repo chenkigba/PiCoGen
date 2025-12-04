@@ -4,8 +4,8 @@ from pathlib import Path
 from typing import Tuple
 
 import numpy as np
-from mirtoolkit import beat_this, bytedance_piano_transcription, sheetsage
 
+from ..mirtoolkit import beat_this, sheetsage, transcription
 from ..utils import check_task_done, logger, mark_task_done, song_dir_name
 from .align import save_delayed_song
 
@@ -75,7 +75,8 @@ def transcribe(
 
 
 def trancribe_file(input_file: Path, output_file: Path):
-    bytedance_piano_transcription.transcribe(input_file, output_file)
+    transcriber = transcription.ByteDancePianoTranscription()
+    transcriber(input_file, output_file)
 
 
 def detect_beat(
