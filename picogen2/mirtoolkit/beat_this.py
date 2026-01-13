@@ -76,3 +76,25 @@ class BeatThis:
         beats, downbeats = self.audio2beats(audio, sr)
 
         return beats, downbeats
+
+
+def detect(file_or_array, sr=None, cuda=None, dbn=True, **kwargs):
+    """
+    Convenience function for detecting beats and downbeats from audio.
+
+    Args:
+        file_or_array (str or Path or ndarray): Path to the audio file or numpy array.
+        sr (int, optional): Sample rate. Required if file_or_array is a numpy array.
+        cuda (bool, optional): Use CUDA if available. Defaults to auto-detect.
+        dbn (bool, optional): Use DBN for beat tracking. Defaults to True.
+        **kwargs: Additional arguments passed to BeatThis.__call__().
+
+    Returns:
+        tuple: (beats, downbeats) arrays of positions in seconds.
+
+    Example:
+        >>> from picogen2.mirtoolkit import beat_this
+        >>> beats, downbeats = beat_this.detect("song.mp3")
+    """
+    detector = BeatThis(cuda=cuda, dbn=dbn)
+    return detector(file_or_array, sr=sr, **kwargs)

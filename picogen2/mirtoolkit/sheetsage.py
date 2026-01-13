@@ -124,3 +124,31 @@ class SheetSage:
                 sheetsage_output["melody_last_hidden_state"],
                 sheetsage_output["harmony_last_hidden_state"],
             )
+
+
+def infer(audio_path=None, audio_url=None, beat_information=None, **kwargs):
+    """
+    Convenience function for extracting SheetSage features from audio.
+
+    Args:
+        audio_path (str or Path, optional): Path to the audio file.
+        audio_url (str, optional): URL to the audio (YouTube link).
+        beat_information (dict, optional): Beat information dict with 'beats' and 'downbeats'.
+        **kwargs: Additional arguments passed to SheetSage.__call__().
+
+    Returns:
+        dict: SheetSage output containing melody and harmony features.
+
+    Example:
+        >>> from picogen2.mirtoolkit import sheetsage
+        >>> output = sheetsage.infer(audio_path="song.mp3", beat_information=beat_info)
+        >>> melody_embs = output["melody_last_hidden_state"]
+        >>> harmony_embs = output["harmony_last_hidden_state"]
+    """
+    model = SheetSage()
+    return model(
+        audio_path=audio_path,
+        audio_url=audio_url,
+        beat_information=beat_information,
+        **kwargs,
+    )

@@ -8,7 +8,6 @@ import torch
 from tqdm import tqdm
 
 from .data.download import ytdlp_download
-from .mirtoolkit import beat_this, sheetsage
 from .model import PiCoGenDecoder
 from .repr import Event
 from .utils import downbeat_time_to_index
@@ -23,6 +22,9 @@ def download(input_url: str, output_file: Path):
 
 @torch.no_grad()
 def detect_beat(audio_file: Path, output_file: Path):
+    """Detect beats in audio file. Requires `pip install picogen2[full]`."""
+    from .mirtoolkit import beat_this
+
     beat_detector = beat_this.BeatThis()
     beats, downbeats = beat_detector(audio_file)
     beat_info = {"beats": beats.tolist(), "downbeats": downbeats.tolist()}
@@ -31,6 +33,9 @@ def detect_beat(audio_file: Path, output_file: Path):
 
 @torch.no_grad()
 def extract_sheetsage_feature(audio_file: Path, output_file: Path, beat_file: Path):
+    """Extract SheetSage features. Requires `pip install picogen2[full]`."""
+    from .mirtoolkit import sheetsage
+
     beat_info = json.loads(beat_file.read_text())
     sheetsage_model = sheetsage.SheetSage()
     sheetsage_output = sheetsage_model(audio_path=audio_file, beat_information=beat_info)

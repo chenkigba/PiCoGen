@@ -184,4 +184,13 @@ pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/python
 
+# uv
+.uv/
+
+# Output
+output/
+*.mid
+*.midi
+*.wav
+
 

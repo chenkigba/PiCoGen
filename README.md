@@ -9,6 +9,25 @@ You can run this model with [Docker](https://docs.docker.com/) or local environm
 * GPU with more than 16GB memory
 * `ffmpeg` installed
 
+### Installation
+
+**Using uv (recommended)**
+```bash
+uv add picogen2
+```
+
+**Using pip**
+```bash
+pip install picogen2
+```
+
+**Using Conda (if you need mpi4py for SheetSage)**
+```bash
+conda create -n picogen2 python=3.11 -y
+conda install -n picogen2 mpi4py -y
+pip install picogen2
+```
+
 ### Quickstart
 You can reproduce the [demo]() just with these commands:
 ```sh
@@ -60,14 +79,13 @@ We provide Python APIs for users who would like to run PiCoGen2 in their own Pyt
 import tempfile
 from pathlib import Path
 
-from mirtoolkit import beat_this, sheetsage
-
-import picogen2 # make sure picogen2 is installed
-import picogen2.assets # remove this if you don't use the default testing song
+import picogen2  # make sure picogen2 is installed
+import picogen2.assets  # remove this if you don't use the default testing song
+from picogen2.mirtoolkit import beat_this, sheetsage
 
 def main():
-    audio_file = picogen2.assets.test_song() # input file
-    output_dir = tempfile.TemporaryDirectory() # output directory
+    audio_file = picogen2.assets.test_song()  # input file
+    output_dir = tempfile.TemporaryDirectory()  # output directory
 
     # initialize
     tokenizer = picogen2.Tokenizer()

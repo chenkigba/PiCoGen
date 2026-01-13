@@ -7,7 +7,7 @@ import questionary
 import torch
 
 from . import assets, infer
-from .data import download, preprocess
+from .data import download, TASK_TRANS, TASK_BEAT, TASK_SHEETSAGE, TASK_ALIGN
 from .model import PiCoGenDecoder
 from .repr import Tokenizer, Vocab, gen_vocab
 from .utils import logger
@@ -36,10 +36,10 @@ def main():
         default="all",
         choices=[
             "all",
-            preprocess.TASK_TRANS,
-            preprocess.TASK_BEAT,
-            preprocess.TASK_SHEETSAGE,
-            preprocess.TASK_ALIGN,
+            TASK_TRANS,
+            TASK_BEAT,
+            TASK_SHEETSAGE,
+            TASK_ALIGN,
         ],
         help="Subtask of preprocessing",
     )
@@ -122,6 +122,9 @@ def command_download(args):
 
 
 def command_preprocess(args):
+    """Run preprocessing. Requires `pip install picogen2[full]`."""
+    from .data import preprocess
+
     if args.data_dir == args.output_dir:
         logger.error("data_dir and output_dir should be different")
         exit(1)
