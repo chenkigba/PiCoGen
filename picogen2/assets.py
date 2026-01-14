@@ -69,9 +69,13 @@ def test_song():
 
 
 def _download(url, output_file_path, verbose=True):
-    """Download a file from URL using Python's urllib (cross-platform)."""
+    """Download a file from URL using Python's urllib (cross-platform).
+
+    Tries direct connection first, then falls back to system proxy if direct fails.
+    """
     import urllib.request
     import ssl
+    import os
 
     if verbose:
         logger.info(f"Downloading {url} to {output_file_path}")
@@ -79,25 +83,51 @@ def _download(url, output_file_path, verbose=True):
     output_file_path = Path(output_file_path)
     output_file_path.parent.mkdir(parents=True, exist_ok=True)
 
-    try:
-        # Create SSL context that doesn't verify certificates (for compatibility)
-        ssl_context = ssl.create_default_context()
-        ssl_context.check_hostname = False
-        ssl_context.verify_mode = ssl.CERT_NONE
+    # Download with progress indication
+    def _report_progress(block_num, block_size, total_size):
+        if total_size > 0:
+            percent = min(100, block_num * block_size * 100 // total_size)
+            if block_num % 100 == 0:  # Print every 100 blocks
+                logger.info(f"Download progress: {percent}%")
 
-        # Download with progress indication
-        def _report_progress(block_num, block_size, total_size):
-            if total_size > 0:
-                percent = min(100, block_num * block_size * 100 // total_size)
-                if block_num % 100 == 0:  # Print every 100 blocks
-                    logger.info(f"Download progress: {percent}%")
+    # Create SSL context that doesn't verify certificates (for compatibility)
+    ssl_context = ssl.create_default_context()
+    ssl_context.check_hostname = False
+    ssl_context.verify_mode = ssl.CERT_NONE
+
+    # Try 1: Direct connection (no proxy)
+    try:
+        logger.info("Trying direct connection...")
+        no_proxy_handler = urllib.request.ProxyHandler({})
+        https_handler = urllib.request.HTTPSHandler(context=ssl_context)
+        opener = urllib.request.build_opener(no_proxy_handler, https_handler)
+        urllib.request.install_opener(opener)
 
         urllib.request.urlretrieve(url, str(output_file_path), reporthook=_report_progress)
 
         if verbose:
             logger.info(f"Download complete: {output_file_path}")
-    except Exception as e:
-        logger.error(f"Failed to download file from {url}: {e}")
+        return
+    except Exception as e1:
+        logger.warning(f"Direct connection failed: {e1}")
         if output_file_path.exists():
             output_file_path.unlink()
-        raise e
+
+    # Try 2: Use system proxy
+    try:
+        logger.info("Trying with system proxy...")
+        # Reset to default opener (uses system proxy)
+        urllib.request.install_opener(urllib.request.build_opener(
+            urllib.request.HTTPSHandler(context=ssl_context)
+        ))
+
+        urllib.request.urlretrieve(url, str(output_file_path), reporthook=_report_progress)
+
+        if verbose:
+            logger.info(f"Download complete: {output_file_path}")
+        return
+    except Exception as e2:
+        logger.error(f"Failed to download file from {url}: {e2}")
+        if output_file_path.exists():
+            output_file_path.unlink()
+        raise e2

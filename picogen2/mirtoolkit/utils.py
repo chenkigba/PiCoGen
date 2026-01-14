@@ -8,7 +8,10 @@ import torchaudio
 
 
 def download(url, file):
-    """Download a file from URL using Python's urllib (cross-platform)."""
+    """Download a file from URL using Python's urllib (cross-platform).
+
+    Tries direct connection first, then falls back to system proxy if direct fails.
+    """
     import urllib.request
     import ssl
 
@@ -19,13 +22,33 @@ def download(url, file):
 
     file.parent.mkdir(parents=True, exist_ok=True)
 
-    try:
-        # Create SSL context that doesn't verify certificates (for compatibility)
-        ssl_context = ssl.create_default_context()
-        ssl_context.check_hostname = False
-        ssl_context.verify_mode = ssl.CERT_NONE
+    # Create SSL context that doesn't verify certificates (for compatibility)
+    ssl_context = ssl.create_default_context()
+    ssl_context.check_hostname = False
+    ssl_context.verify_mode = ssl.CERT_NONE
 
-        # Download to temp file first, then move
+    # Try 1: Direct connection (no proxy)
+    try:
+        no_proxy_handler = urllib.request.ProxyHandler({})
+        https_handler = urllib.request.HTTPSHandler(context=ssl_context)
+        opener = urllib.request.build_opener(no_proxy_handler, https_handler)
+        urllib.request.install_opener(opener)
+
+        tmp_dir = tempfile.TemporaryDirectory()
+        tmp_file = Path(tmp_dir.name) / file.name
+
+        urllib.request.urlretrieve(url, str(tmp_file))
+        shutil.move(str(tmp_file), str(file))
+        return
+    except Exception:
+        pass  # Try with proxy
+
+    # Try 2: Use system proxy
+    try:
+        urllib.request.install_opener(urllib.request.build_opener(
+            urllib.request.HTTPSHandler(context=ssl_context)
+        ))
+
         tmp_dir = tempfile.TemporaryDirectory()
         tmp_file = Path(tmp_dir.name) / file.name
 
