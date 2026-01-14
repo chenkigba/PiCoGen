@@ -8,32 +8,32 @@ import torchaudio
 
 
 def download(url, file):
+    """Download a file from URL using Python's urllib (cross-platform)."""
+    import urllib.request
+    import ssl
+
     assert isinstance(url, str)
     assert isinstance(file, (str, Path))
     if isinstance(file, str):
         file = Path(file)
 
-    if shutil.which("wget") is None:
-        raise FileNotFoundError("wget not found. Please install wget.")
-    # Download the file using wget
-    tmp_dir = tempfile.TemporaryDirectory()
-    tmp_file = tmp_dir.name + "/" + file.name
-    subprocess.run(["wget", "-O", tmp_file, url], check=True)
-    shutil.move(tmp_file, file)
+    file.parent.mkdir(parents=True, exist_ok=True)
 
-    # try:
-    #     # Send a GET request to the URL
-    #     response = requests.get(url, stream=True)
-    #     response.raise_for_status()  # Raise an error for bad status codes
+    try:
+        # Create SSL context that doesn't verify certificates (for compatibility)
+        ssl_context = ssl.create_default_context()
+        ssl_context.check_hostname = False
+        ssl_context.verify_mode = ssl.CERT_NONE
 
-    #     tmp_dir = tempfile.TemporaryDirectory()
-    #     tmp_file = tmp_dir.name + "/" + file.name
-    #     with open(tmp_file, "wb") as f:
-    #         for chunk in response.iter_content(chunk_size=8192):
-    #             f.write(chunk)
-    #     shutil.move(tmp_file, file)
-    # except requests.RequestException as e:
-    #     print(f"An error occurred: {e}")
+        # Download to temp file first, then move
+        tmp_dir = tempfile.TemporaryDirectory()
+        tmp_file = Path(tmp_dir.name) / file.name
+
+        urllib.request.urlretrieve(url, str(tmp_file))
+        shutil.move(str(tmp_file), str(file))
+    except Exception as e:
+        print(f"Download failed: {e}")
+        raise
 
 
 def load_audio(

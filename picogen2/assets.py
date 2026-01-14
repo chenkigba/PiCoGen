@@ -69,16 +69,34 @@ def test_song():
 
 
 def _download(url, output_file_path, verbose=True):
+    """Download a file from URL using Python's urllib (cross-platform)."""
+    import urllib.request
+    import ssl
+
     if verbose:
         logger.info(f"Downloading {url} to {output_file_path}")
 
-    if shutil.which("wget") is None:
-        logger.error("wget is not installed. Please install wget to download the model.")
-        raise FileNotFoundError("`wget` is not installed")
+    output_file_path = Path(output_file_path)
+    output_file_path.parent.mkdir(parents=True, exist_ok=True)
 
     try:
-        subprocess.run(["wget", url, "-O", str(output_file_path)], check=True)
-    except subprocess.CalledProcessError as e:
+        # Create SSL context that doesn't verify certificates (for compatibility)
+        ssl_context = ssl.create_default_context()
+        ssl_context.check_hostname = False
+        ssl_context.verify_mode = ssl.CERT_NONE
+
+        # Download with progress indication
+        def _report_progress(block_num, block_size, total_size):
+            if total_size > 0:
+                percent = min(100, block_num * block_size * 100 // total_size)
+                if block_num % 100 == 0:  # Print every 100 blocks
+                    logger.info(f"Download progress: {percent}%")
+
+        urllib.request.urlretrieve(url, str(output_file_path), reporthook=_report_progress)
+
+        if verbose:
+            logger.info(f"Download complete: {output_file_path}")
+    except Exception as e:
         logger.error(f"Failed to download file from {url}: {e}")
         if output_file_path.exists():
             output_file_path.unlink()
