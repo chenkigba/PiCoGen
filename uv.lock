@@ -9,7 +9,10 @@ resolution-markers = [
 ]
 
 [manifest]
-overrides = [{ name = "madmom", git = "https://github.com/chenkigba/madmom.git" }]
+overrides = [
+    { name = "jukebox", git = "https://github.com/chenkigba/mirtoolkit_jukebox.git?branch=mirtoolkit" },
+    { name = "madmom", git = "https://github.com/chenkigba/madmom.git" },
+]
 
 [[package]]
 name = "alabaster"
@@ -1113,7 +1116,7 @@ wheels = [
 [[package]]
 name = "jukebox"
 version = "1.0"
-source = { git = "https://github.com/tanchihpin0517/mirtoolkit_jukebox.git#8105cd8e7146717ca7baef5d5c11910edba30eef" }
+source = { git = "https://github.com/chenkigba/mirtoolkit_jukebox.git?branch=mirtoolkit#5ee33ac2e8b03471dbacad1d4154da0511191bf5" }
 dependencies = [
     { name = "fire" },
     { name = "librosa" },
@@ -2353,7 +2356,7 @@ requires-dist = [
     { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=4.0.0" },
     { name = "questionary", specifier = ">=2.0.0" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.1.0" },
-    { name = "sheetsage", marker = "extra == 'full'", git = "https://github.com/tanchihpin0517/PiCoGen-sheetsage.git" },
+    { name = "sheetsage", marker = "extra == 'full'", git = "https://github.com/chenkigba/PiCoGen-sheetsage.git" },
     { name = "sphinx", marker = "extra == 'docs'", specifier = ">=4.3.0,<7.1.0" },
     { name = "sphinx-autobuild", marker = "extra == 'docs'", specifier = "==2021.3.14" },
     { name = "sphinx-autodoc-typehints", marker = "extra == 'docs'", specifier = "==1.23.3" },
@@ -3294,7 +3297,7 @@ wheels = [
 [[package]]
 name = "sheetsage"
 version = "0.0.1"
-source = { git = "https://github.com/tanchihpin0517/PiCoGen-sheetsage.git#71a8ffe556691a0d9290b8f8bb18d8da450a8f09" }
+source = { git = "https://github.com/chenkigba/PiCoGen-sheetsage.git#acf8dfd310a8ee7f6bcee87777da269532029c21" }
 dependencies = [
     { name = "jukebox" },
     { name = "librosa" },

@@ -9,8 +9,8 @@ transformers
 pyrubberband
 synctoolbox
 miditoolkit
-sheetsage @ git+https://github.com/tanchihpin0517/PiCoGen-sheetsage.git
-beat_this @ https://github.com/CPJKU/beat_this/archive/main.zip
+sheetsage @ git+https://github.com/chenkigba/PiCoGen-sheetsage.git
+beat_this @ git+https://github.com/chenkigba/beat_this.git
 madmom @ git+https://github.com/chenkigba/madmom.git
 mpi4py
 piano_transcription_inference
