@@ -52,7 +52,10 @@ class SheetSage:
 
         if audio_path:  # if audio_path is provided
             ext = "flac"
-            tmp_audio_file = tempfile.NamedTemporaryFile(suffix=f".{ext}")
+            # Windows: NamedTemporaryFile locks file, use delete=False and close first
+            tmp_audio_file = tempfile.NamedTemporaryFile(suffix=f".{ext}", delete=False)
+            tmp_audio_path = tmp_audio_file.name
+            tmp_audio_file.close()  # Close so ffmpeg can write to it
             subprocess.run(
                 [
                     "ffmpeg",
@@ -62,10 +65,10 @@ class SheetSage:
                     "-f",
                     ext,
                     "-y",
-                    tmp_audio_file.name,
+                    tmp_audio_path,
                 ]
             )
-            audio_path = Path(tmp_audio_file.name)
+            audio_path = Path(tmp_audio_path)
 
             assert audio_path.exists(), f"File not found: {audio_path}"
         else:  # if audio_url is provided

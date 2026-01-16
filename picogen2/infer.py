@@ -32,13 +32,13 @@ def detect_beat(audio_file: Path, output_file: Path):
 
 
 @torch.no_grad()
-def extract_sheetsage_feature(audio_file: Path, output_file: Path, beat_file: Path):
+def extract_sheetsage_feature(audio_file: Path, output_file: Path, beat_file: Path, use_jukebox: bool = True):
     """Extract SheetSage features. Requires `pip install picogen2[full]`."""
     from .mirtoolkit import sheetsage
 
     beat_info = json.loads(beat_file.read_text())
     sheetsage_model = sheetsage.SheetSage()
-    sheetsage_output = sheetsage_model(audio_path=audio_file, beat_information=beat_info)
+    sheetsage_output = sheetsage_model(audio_path=audio_file, beat_information=beat_info, use_jukebox=use_jukebox)
     np.savez_compressed(
         output_file,
         melody=sheetsage_output["melody_last_hidden_state"],
