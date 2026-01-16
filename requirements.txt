@@ -11,7 +11,8 @@ synctoolbox
 miditoolkit
 sheetsage @ git+https://github.com/tanchihpin0517/PiCoGen-sheetsage.git
 beat_this @ https://github.com/CPJKU/beat_this/archive/main.zip
-madmom @ git+https://github.com/CPJKU/madmom.git@0551aa8f48d71a367d92b5d3a347a0cf7cd97cc9
+madmom @ git+https://github.com/chenkigba/madmom.git
+mpi4py
 piano_transcription_inference
 # demucs @ git+https://github.com/tanchihpin0517/mirtoolkit_demucs.git@mirtoolkit
 # mirtoolkit @ git+https://github.com/tanchihpin0517/mirtoolkit.git@v0.1.0
