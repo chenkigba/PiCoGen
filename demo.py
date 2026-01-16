@@ -117,7 +117,8 @@ def main():
         temp_dir.mkdir(exist_ok=True)
         cleanup = lambda: None
     else:
-        temp_context = tempfile.TemporaryDirectory()
+        # Windows: 使用 ignore_cleanup_errors=True 避免文件锁定问题
+        temp_context = tempfile.TemporaryDirectory(ignore_cleanup_errors=True)
         temp_dir = Path(temp_context.name)
         cleanup = temp_context.cleanup
 
